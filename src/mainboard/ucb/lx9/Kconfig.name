@@ -1,0 +1,2 @@
+config BOARD_UCB_LX9
+        bool "LX9"

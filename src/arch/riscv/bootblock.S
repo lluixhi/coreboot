@@ -25,24 +25,29 @@
 .space 0x200
 .globl _start
 _start:
+#if __GNUC__ >= 5
+  // Check to see if this is the boot cpu. if not, wait.
+  csrr t0, mhartid
+  bne t0, x0, wait_for_interrupt
+#endif
 
-	// pending figuring out this f-ing toolchain. Hardcode what we know works.
-//  la sp, 0x4ef0 // .stacktop
-//  la sp, 0x40000 // from src/mainboard/emulation/qemu-riscv
-  la sp, 0x7FF00 // stack start + stack size
+  // See memlayout.ld under mainboard and memlayout.h
+  // In arch/include and include
+  // 0x7ff00 -- Top of Stack    -- _estack
+  // 0x40000 -- Bottom of Stack -- _stack
+  la sp, _estack
+  la t0, _stack
 
-  // make room for HLS
-  addi sp, sp, -64 // MENTRY_FRAME_SIZE
+  // Make room for HART Local Storage
+  addi sp, sp, -64
+ 
+  // Poison the whole stack.
+  li t1, 0xdeadbeef
+init_stack_loop:
+  sw t1, 0(t0)
+  addi t0, t0, 4
 
-
-  //poison the stack
-  la t1, 0x40000
-  li t0, 0xdeadbeef
-  sd t0, 0(t1)
-
-//  la gp, _gp
-
-  # clear any pending interrupts
+  // Clear any pending interrupts
 #if __GNUC__ < 5
   csrwi clear_ipi, 0
 #else
@@ -50,20 +55,16 @@ _start:
 #endif
 
   call main
+
+#if __GNUC__ >= 5
+wait_for_interrupt:
+ wfi
+  j wait_for_interrupt
+#endif
 .=0x4000
-.stack:
-.align 8
-	.space 0xf00
-.stacktop:
-	.quad 0
-.align 3
-.stack_size:
-	.quad 0xf00
+// Nothing below this actually seems necessary, but I assume it's for
+// Versioning Code.
 
-reset:
-init_stack_loop:
-
-	.word CONFIG_STACK_SIZE
 	.section ".id", "a", %progbits
 
 	.section ".id", "a", @progbits

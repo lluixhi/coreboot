@@ -1,7 +1,7 @@
 /*
  * This file is part of the coreboot project.
  *
- * Copyright 2013 Google Inc.
+ * Copyright (C) 2014 Imagination Technologies
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
  * Foundation, Inc.
  */
 
+#include <arch/stages.h>
 #include <program_loading.h>
 
 void arch_prog_run(struct prog *prog)
 {
-	void (*doit)(void *);
-
+        void (*doit)(void *)
 	doit = prog_entry(prog);
 	doit(prog_entry_arg(prog));
 }

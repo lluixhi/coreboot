@@ -1,0 +1,16 @@
+if VENDOR_UCB
+
+choice
+        prompt "Mainboard model"
+
+source "src/mainboard/ucb/*/Kconfig.name"
+
+endchoice
+
+source "src/mainboard/ucb/*/Kconfig"
+
+config MAINBOARD_VENDOR
+        string "Mainboard Vendor"
+        default "UCB"
+
+endif

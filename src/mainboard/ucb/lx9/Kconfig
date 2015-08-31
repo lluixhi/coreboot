@@ -1,0 +1,27 @@
+if BOARD_UCB_LX9
+
+config BOARD_SPECIFIC_OPTIONS
+        def_bool y
+        select ARCH_BOOTBLOCK_RISCV
+        select BOARD_ID_AUTO
+        select BOARD_ROMSIZE_KB_16384
+        select COMMON_CBFS_SPI_WRAPPER
+        select HAVE_HARD_RESET
+        select RAM_CODE_SUPPORT
+        select SOC_UCB_ZSCALE
+        select SPI_FLASH
+        select SPI_FLASH_STMICRO
+
+config MAINBOARD_DIR
+        string
+        default ucb/spartan6
+
+config MAINBOARD_PART_NUMBER
+        string
+        default "LX9"
+
+config MAINBOARD_VENDOR
+        string
+        default "UCB"
+
+endif

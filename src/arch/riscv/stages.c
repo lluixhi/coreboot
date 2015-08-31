@@ -30,11 +30,6 @@
 
 #include <arch/stages.h>
 
-void stage_entry(void)
-{
-	main();
-}
-
 /* we had marked 'doit' as 'noreturn'.
  * There is no apparent harm in leaving it as something we can return from, and in the one
  * case where we call a payload, the payload is allowed to return.
@@ -49,4 +44,9 @@ void stage_exit(void *addr)
 	 */
 	//cache_sync_instructions();
 	doit();
+}
+
+void stage_entry(void)
+{
+        main();
 }
